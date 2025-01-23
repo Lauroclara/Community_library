@@ -14,29 +14,28 @@ db.run(`
 function createUserRepository(newUser) {
   return new Promise((resolve, reject) => {
     const { username, email, password, avatar } = newUser;
-
     db.run(
       `
       INSERT INTO users (username, email, password, avatar)
       VALUES (?, ?, ?, ?)
-    `,
+      `,
       [username, email, password, avatar],
       function (err) {
         if (err) {
           reject(err);
         } else {
-          resolve({ id: this.lastID, ...newUser });
+          resolve({ id: this.lastID, ...newUser});
         }
       }
     );
   });
 }
 
-function findByEmailRepository(email) {
+function findUserByEmailRepository(email) {
   return new Promise((resolve, reject) => {
     db.get(
-      `
-      SELECT id, username, email, avatar
+    `
+      SELECT id, username, email, avatar, password
       FROM users
       WHERE email = ?
     `,

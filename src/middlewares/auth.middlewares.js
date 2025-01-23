@@ -19,17 +19,18 @@ export async function authMiddleware(req, res, next) {
         return res.status(401).send({ message: "Malformatted token!" });
     }
 
-    try {
-        const decoded = jwt.verify(tokenJWT, process.env.SECRET_JWT);
-        const user = await userService.findUserByIdService(decoded.id);
-
-        if (!user) {
-            return res.status(404).send({ message: "User not found!" });
+    jwt.verify(token, process.env.SECRET_JWT, async (err, decoded) => {
+        if (err) {
+            return res.status(401).send({ message: "Invalid token!", error: err.message});
         }
 
-        req.user = user;
-        next(); // Chame o próximo middleware
-    } catch (err) {
-        return res.status(401).send({ message: "Invalid token!" });
-    }
+        const user = await userService.findUserByIdService(decoded.id);
+        if (!user || user.id){
+            return res.status(401).send({ message: "Invalid token!"});
+        }
+
+        req.userId = user.id;
+
+        return next()
+    });
 }
