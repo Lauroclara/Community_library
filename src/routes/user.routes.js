@@ -9,33 +9,32 @@ import { authMiddleware } from "../middlewares/auth.middlewares.js";
 const router = Router();
 
 router.post(
-  '/users',
+  '/',
   validate(userSchema),
   userController.createUserController
 );
 
 router.post(
-  '/users',
-  validate(userSchema),
+  "/login",
   userController.loginUserController
 );
 
 router.use(authMiddleware)
-router.get('/users', userController.findAllUsersController);
+router.get("/", userController.findAllUsersController);
 router.get(
-  '/users/:id',
+  ":id",
   validateUserId,
   userController.findUserByIdController
 );
 
-router.put(
-  '/users/:id',
+router.patch(
+  "/:id",
   validate(userSchema),
   userController.updateUserController
 );
 
 router.delete(
-  '/users/:id',
+  "/:id",
   validateUserId,
   userController.deleteUserController
 );
